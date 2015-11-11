@@ -1,5 +1,5 @@
 ## Control Flow Analysis
-The control flow analyzer (0-CFA) for my Come language. 
+Control flow analysis (0-CFA) for my Come language. 
 
 For program:  
 ```  
