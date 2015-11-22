@@ -13,7 +13,6 @@ main = withFile
        ReadMode
        (\handle -> do
            source <- hGetContents handle
-           -- putStrLn $ show $ jsparse source
            let ((c, r), ast) = interpreter source
            putStrLn $ "\nLabeled Program\n" ++ show ast
            putStrLn "\nCache"
@@ -21,7 +20,7 @@ main = withFile
            putStrLn "\nEnvir"
            mapM_ (\(k, v) -> putStrLn $ k ++ " -> " ++ show v)  $ Map.toList r
        )
---interpreter :: String -> a
+
 interpreter source = case jsparse source of
-                      Right ts -> (controlFlow ts, convert ts)
+                      Right ts -> (controlFlow ts, fst $ convert ts)
                       Left e -> error $ show e               

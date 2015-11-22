@@ -1,7 +1,5 @@
 module ControlFlow where
 
-import Control.Monad.Writer
-
 import LabeledAst
 import Data.Set (Set, union, singleton, isSubsetOf, member)
 import qualified Data.Set as Set
@@ -14,11 +12,10 @@ data Abstract = Cache Label
               | Envir String
               deriving (Eq, Ord, Show)
                 
-
 data Constraint = Concrete LAst Abstract
                 | Subset Abstract Abstract
                 | Conditional LAst Abstract Abstract Abstract
-                deriving (Eq, Ord, Show)
+                deriving (Eq, Ord)
 
 type Cache = Map Label [LAst]
 type Envir = Map String [LAst]
@@ -102,7 +99,7 @@ buildResult (Conditional t p p1 p2 : cs) d w=
   if t `member` findD p d
   then let (d', w') = add p2 (findD p1 d) d w
        in buildResult cs d' w'
-  else (d, w)                     
+  else buildResult cs d w                  
 
 add :: Abstract -> Set LAst -> Map Abstract (Set LAst) -> [Abstract] -> (Map Abstract (Set LAst), [Abstract])
 add q d da w =
@@ -124,3 +121,8 @@ isConcrete _ = False
 isCache :: Abstract -> Bool
 isCache (Cache _) = True
 isCache _ = False
+
+instance Show Constraint where
+  show (Concrete t c) = show t ++ " in " ++ show c
+  show (Subset c1 c2) = show c1 ++ " => " ++ show c2
+  show (Conditional t p p1 p2) = "if " ++ show t ++ " in " ++ show p ++ " -> " ++ show p1 ++ " => " ++ show p2
